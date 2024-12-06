@@ -1,12 +1,12 @@
 import express from 'express';
-import productsRouter from "./routes/products";
+import productsRouter from "./routes/messages";
 import fileDb from "./FileDb";
 import fs = require('fs');
 
 const app = express();
 const port = 8000;
 app.use(express.json());
-app.use('/products', productsRouter);
+app.use('/messages', productsRouter);
 
 const run = async () => {
     if(fs.existsSync('./db.json')){
