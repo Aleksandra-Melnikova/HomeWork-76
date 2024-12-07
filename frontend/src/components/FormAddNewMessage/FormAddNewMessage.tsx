@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IInputMessage } from "../../types";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import { createMessage } from "../../thunks/MessagesThunk.ts";
 import { useAppDispatch } from "../../app/hooks.ts";
 import { toast } from "react-toastify";
+import Grid from "@mui/material/Grid2";
+import { Box, Button, TextField } from '@mui/material';
 
 const FormAddNewMessage = () => {
   const [inputMessage, setInputMessage] = useState<IInputMessage>({
@@ -63,34 +63,34 @@ const FormAddNewMessage = () => {
   }, [buttonClicked, postNewMessage]);
 
   return (
-    <div className="mb-3">
-      <Form onSubmit={submitForm}>
-        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-          <Form.Label column={"lg"}> Your name</Form.Label>
-          <Form.Control
-            name="author"
-            type="text"
-            placeholder="Enter your name"
+    <Box marginBottom={2} >
+      <form onSubmit={submitForm}>
+        <Grid size={12} marginTop={3} marginBottom={1}>
+          <TextField
+            fullWidth
+            rows={4}
+            id="decoded"
+            label="Your name"
             value={inputMessage.author}
             onChange={changeInputMessage}
+            name="author"
           />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-          <Form.Label column={"lg"}>Your message:</Form.Label>
-          <Form.Control
-            name="message"
-            type="text"
+        </Grid>
+        <Grid size={8}>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            id="message"
+            label="Your message:"
             value={inputMessage.message}
             onChange={changeInputMessage}
-            as="textarea"
-            rows={3}
+            name="message"
           />
-        </Form.Group>
-        <Button className="ps-4 pe-4" variant="primary" type="submit">
-          Send
-        </Button>{" "}
-      </Form>
-    </div>
+        </Grid>
+        <Box marginTop={1} marginBottom={4}><Button variant={'contained'} type={"submit"} >Send</Button></Box>
+      </form>
+    </Box>
   );
 };
 

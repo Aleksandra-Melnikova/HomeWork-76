@@ -1,6 +1,7 @@
 import React from "react";
 import { IMessage } from "../../types";
-import Row from "react-bootstrap/Row";
+import { Container, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 const MessageItem: React.FC<IMessage> = ({
   _id,
@@ -9,21 +10,17 @@ const MessageItem: React.FC<IMessage> = ({
   message,
 }) => {
   return (
-    <Row id={_id} className="border bg-light rounded mb-3 p-3 ">
-      <Row className="mb-2 pb-1 border-bottom">
-        <span>
-          From: <span className="text-primary">{author}</span>
-        </span>
-        <div>
-          <strong> Date: </strong>
-          <span>{datetime}</span>
-        </div>
-      </Row>
-      <Row className="pb-1">
-        <strong>Text of message: </strong>
-        <p className="mt-1">{message}</p>
-      </Row>
-    </Row>
+    <Container maxWidth="md">
+    <Grid   container itemID={_id} spacing={2} marginBottom={3} padding={3} border={1} borderColor={'slategray'} borderRadius={1}>
+      <Grid size={12} >
+        <Typography fontSize={24}>
+          <Typography display={'inline-block'} fontWeight={'bold'} fontSize={24} color={'textSecondary'} >From: </Typography> {author}
+        </Typography>
+          <Typography fontSize={24}>  <Typography display={'inline-block'} color={'textSecondary'} fontWeight={'bold'} fontSize={24} >Date: </Typography> {datetime} </Typography>
+        <Typography fontSize={24} > <Typography display={'inline-block'}  color={'textSecondary'} fontWeight={'bold'} fontSize={24} >Text of message: </Typography> {message} </Typography>
+      </Grid>
+    </Grid>
+    </Container>
   );
 };
 

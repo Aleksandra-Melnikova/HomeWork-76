@@ -1,13 +1,16 @@
 import FormAddNewMessage from "../../components/FormAddNewMessage/FormAddNewMessage.tsx";
 import MessageItem from "../../components/MessageItem/MessageItem.tsx";
 import { useCallback, useEffect } from "react";
-import Container from "react-bootstrap/Container";
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
 import { selectMessages } from "../../slices/MessagesSlice.ts";
+import dayjs from "dayjs";
 import {
   fetchAllMessages,
   fetchMessagesLsatDateTime,
 } from "../../thunks/MessagesThunk.ts";
+import { Box, Container, Typography } from '@mui/material';
+
+
 
 const Chat = () => {
   const messages = useAppSelector(selectMessages);
@@ -41,27 +44,26 @@ const Chat = () => {
   }, [getNewMessages]);
 
   return (
-    <div>
-      <Container>
-        <h1 className="p-4 fs-2 text-center ">Chat</h1>
-      </Container>
-      <Container style={{ position: "relative" }}>
-        <div id="messagesAll">
+    <Container maxWidth={'md'}>
+      <Typography variant={'h3'} marginTop={3} marginBottom={3} align={'center'} >Chat
+      </Typography>
+      <Box style={{ position: "relative" }}>
+        <Box>
           {messages.map((message) => (
             <MessageItem
               key={message._id}
               message={message.message}
               _id={message._id}
-              datetime={String(new Date(message.datetime))}
+              datetime={dayjs(message.datetime).format('YYYY-MM-DD hh:mm:ss') }
               author={message.author}
             />
           ))}
-        </div>
-        <div id="formBlock" className="mt-3 mb-2 pt-1">
+        </Box>
+        <Box marginBottom={2} padding={3}>
           <FormAddNewMessage />
-        </div>
-      </Container>
-    </div>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
