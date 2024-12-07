@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { IInputMessage } from "../../types";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { createMessage } from "../../thunks/MessagesThunk.ts";
+import { useAppDispatch } from "../../app/hooks.ts";
+import { toast } from "react-toastify";
 
 const FormAddNewMessage = () => {
-  const url = "http://146.185.154.90:8000/messages";
   const [inputMessage, setInputMessage] = useState<IInputMessage>({
-    name: "",
+    author: "",
     message: "",
   });
+  const dispatch = useAppDispatch();
+  // const isAddLoading = useAppSelector(selectAddLoading);
   const [buttonClicked, setButtonClicked] = useState(false);
 
   const changeInputMessage = (
@@ -26,41 +30,37 @@ const FormAddNewMessage = () => {
     e.preventDefault();
 
     if (
-      inputMessage.name.trim().length > 0 &&
+      inputMessage.author.trim().length > 0 &&
       inputMessage.message.trim().length > 0
     ) {
       setInputMessage({
         ...inputMessage,
-        name: inputMessage.name,
+        author: inputMessage.author,
         message: inputMessage.message,
       });
       setButtonClicked((prevState) => !prevState);
     } else {
-      alert("Поле не должно быть пустым");
+      alert("Fill all fields.");
     }
   };
-  useEffect(() => {
-    const postNewMessage = async () => {
-      const data = new URLSearchParams();
-      if (
-        inputMessage.name.trim().length > 0 &&
-        inputMessage.message.trim().length > 0
-      ) {
-        data.set("message", inputMessage.message);
-        data.set("author", inputMessage.name);
 
-        await fetch(url, {
-          method: "post",
-          body: data,
-        });
-      }
-    };
+  const postNewMessage = useCallback(async () => {
+    if (
+      inputMessage.author.trim().length > 0 &&
+      inputMessage.message.trim().length > 0
+    ) {
+      await dispatch(createMessage(inputMessage));
+      toast.success("Message added successfully!");
+      setInputMessage({
+        author: "",
+        message: "",
+      });
+    }
+  }, [dispatch, inputMessage]);
+
+  useEffect(() => {
     postNewMessage().catch((e) => console.error(e));
-    setInputMessage({
-      name: "",
-      message: "",
-    });
-  }, [buttonClicked]);
+  }, [buttonClicked, postNewMessage]);
 
   return (
     <div className="mb-3">
@@ -68,10 +68,10 @@ const FormAddNewMessage = () => {
         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
           <Form.Label column={"lg"}> Your name</Form.Label>
           <Form.Control
-            name="name"
+            name="author"
             type="text"
             placeholder="Enter your name"
-            value={inputMessage.name}
+            value={inputMessage.author}
             onChange={changeInputMessage}
           />
         </Form.Group>

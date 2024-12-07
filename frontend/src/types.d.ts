@@ -1,5 +1,5 @@
 export interface IInputMessage {
-  name: string;
+  author: string;
   message: string;
 }
 

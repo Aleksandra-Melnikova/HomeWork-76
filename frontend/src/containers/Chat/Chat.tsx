@@ -1,34 +1,25 @@
 import FormAddNewMessage from "../../components/FormAddNewMessage/FormAddNewMessage.tsx";
 import MessageItem from "../../components/MessageItem/MessageItem.tsx";
-import { useCallback, useEffect, useState } from "react";
-import { IMessage } from "../../types";
+import { useCallback, useEffect } from "react";
 import Container from "react-bootstrap/Container";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
+import { selectMessages } from "../../slices/MessagesSlice.ts";
+import {
+  fetchAllMessages,
+  fetchMessagesLsatDateTime,
+} from "../../thunks/MessagesThunk.ts";
 
 const Chat = () => {
-  const url = "http://146.185.154.90:8000/messages";
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const messages = useAppSelector(selectMessages);
+  const dispatch = useAppDispatch();
 
-  const fetchData = async (url: string) => {
-    const response = await fetch(url);
-    if (response.ok) {
-      let messages: IMessage[] = (await response.json()) as IMessage[];
-      messages = messages.map((post) => {
-        return {
-          _id: post._id,
-          datetime: post.datetime,
-          author: post.author,
-          number: 1,
-          message: post.message,
-        };
-      });
-      setMessages(messages);
-      window.scrollTo(0, document.body.scrollHeight);
-    }
-  };
+  const fetchMessages = useCallback(async () => {
+    await dispatch(fetchAllMessages());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchData(url).catch((e) => console.error(e));
-  }, []);
+    void fetchMessages();
+  }, [fetchMessages]);
 
   let date = "";
   if (messages.length > 0) {
@@ -36,30 +27,14 @@ const Chat = () => {
   }
 
   const getNewMessages = useCallback(async () => {
-    try {
-      const messagesNewItem = await fetch(url + `?datetime=${date}`);
-      const messagesNew: IMessage[] =
-        (await messagesNewItem.json()) as IMessage[];
-      if (messagesNew.length === 0) {
-        console.log("Новых сообщений нет");
-      } else if (messagesNew.length !== 0) {
-        const copyMessages = [...messages];
+    await dispatch(fetchMessagesLsatDateTime(date));
+    // window.document.body.scrollHeight;
 
-        for (let i = 0; i < messagesNew.length; i++) {
-          copyMessages.push(messagesNew[i]);
-        }
-        setMessages(copyMessages);
-
-        window.scrollTo(0, document.body.scrollHeight);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  }, [date, messages]);
+  }, [date, dispatch]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      getNewMessages();
+      void getNewMessages();
     }, 5000);
 
     return () => clearInterval(intervalId);
