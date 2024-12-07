@@ -2,11 +2,15 @@ import express from 'express';
 import productsRouter from "./routes/messages";
 import fileDb from "./FileDb";
 import fs = require('fs');
+import cors from "cors";
+
 
 const app = express();
+app.use(cors());
 const port = 8000;
 app.use(express.json());
 app.use('/messages', productsRouter);
+
 
 const run = async () => {
     if(fs.existsSync('./db.json')){
