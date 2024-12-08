@@ -14,11 +14,44 @@ import {
 } from "../../thunks/MessagesThunk.ts";
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { animateScroll } from "react-scroll";
+import { IMessageWithDate } from "../../types";
 
 const Chat = () => {
   const messages = useAppSelector(selectMessages);
   const dispatch = useAppDispatch();
   const isAllFetchLoading = useAppSelector(selectFetchLoading);
+  const messageWithDate: IMessageWithDate[] = [];
+
+  const showMessageDateTime = (dateTime: string) => {
+    const today = new Date();
+    const yesterday = new Date();
+    const roomLastMessageDate = new Date(dateTime);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (dateTime) {
+      if (yesterday.getDate() === roomLastMessageDate.getDate()) {
+        return "yesterday";
+      } else if (today.getDate() === roomLastMessageDate.getDate()) {
+        return "today";
+      } else if (today.getFullYear() === roomLastMessageDate.getFullYear()) {
+        return dayjs(roomLastMessageDate).format("DD-MM hh:mm:ss");
+      } else {
+        return dayjs(roomLastMessageDate).format("DD-MM-YYYY hh:mm:ss");
+      }
+    }
+  };
+
+  messages.map((message) => {
+    const newDate = showMessageDateTime(message.datetime);
+    if (newDate) {
+      messageWithDate.push({
+        message: message.message,
+        id: message.id,
+        author: message.author,
+        datetime: newDate,
+      });
+    }
+  });
 
   const fetchMessages = useCallback(async () => {
     await dispatch(fetchAllMessages());
@@ -39,11 +72,6 @@ const Chat = () => {
   }
   const getNewMessages = useCallback(async () => {
     await dispatch(fetchMessagesLsatDateTime(date));
-    const options = {
-      duration: 500,
-      smooth: true,
-    };
-    animateScroll.scrollToBottom(options);
   }, [date, dispatch]);
 
   useEffect(() => {
@@ -79,13 +107,11 @@ const Chat = () => {
           ) : (
             <Box style={{ position: "relative" }}>
               {" "}
-              {messages.map((message) => (
+              {messageWithDate.map((message) => (
                 <MessageItem
                   key={message.datetime + message.id}
                   message={message.message}
-                  datetime={dayjs(message.datetime).format(
-                    "YYYY-MM-DD hh:mm:ss",
-                  )}
+                  datetime={message.datetime}
                   author={message.author}
                 />
               ))}

@@ -9,3 +9,10 @@ export interface IMessage {
   datetime: string;
   message: string;
 }
+
+export interface IMessageWithDate {
+  id: string | undefined;
+  author: string;
+  datetime: string;
+  message: string;
+}

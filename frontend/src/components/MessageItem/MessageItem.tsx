@@ -3,7 +3,7 @@ import { Box, Container, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 export interface IMessageItemProps {
   author: string;
-  datetime: string;
+  datetime?: string;
   message: string;
 }
 
@@ -38,20 +38,23 @@ const MessageItem: React.FC<IMessageItemProps> = ({
               {author}
             </Typography>
           </Box>
-          <Box>
-            <Typography
-              display={"inline-block"}
-              color={"textSecondary"}
-              fontWeight={"bold"}
-              fontSize={24}
-            >
-              Date:{" "}
-            </Typography>{" "}
-            <Typography display={"inline-block"} fontSize={24}>
-              {" "}
-              {datetime}{" "}
-            </Typography>
-          </Box>
+          {datetime === "today" ? null : (
+            <Box>
+              <Typography
+                display={"inline-block"}
+                color={"textSecondary"}
+                fontWeight={"bold"}
+                fontSize={24}
+              >
+                Date:{" "}
+              </Typography>{" "}
+              <Typography display={"inline-block"} fontSize={24}>
+                {" "}
+                {datetime}{" "}
+              </Typography>
+            </Box>
+          )}
+
           <Box>
             <Typography
               display={"inline-block"}
