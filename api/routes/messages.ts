@@ -24,7 +24,6 @@ messageRouter.get('/', async (req, res) => {
                 }
                 res.send(messagesLastDate);
             }
-
         }
     } else{
         const messages = await fileDb.getItems();
@@ -34,9 +33,8 @@ messageRouter.get('/', async (req, res) => {
                 messagesNew.push(messages[i]);
             }
         }
-        res.send(messages);
+        res.send(messagesNew.reverse());
     }
-
 });
 
 messageRouter.post('/', async (req, res) => {
@@ -52,8 +50,6 @@ messageRouter.post('/', async (req, res) => {
     else {
         res.status(400).send({"error": "Author and message must be present in the request"});
     }
-
-
 
 });
 
