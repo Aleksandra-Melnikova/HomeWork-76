@@ -2,22 +2,31 @@ import FormAddNewMessage from "../../components/FormAddNewMessage/FormAddNewMess
 import MessageItem from "../../components/MessageItem/MessageItem.tsx";
 import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
-import { selectMessages } from "../../slices/MessagesSlice.ts";
+import {
+  selectFetchLoading,
+  selectMessages,
+} from "../../slices/MessagesSlice.ts";
 import dayjs from "dayjs";
+
 import {
   fetchAllMessages,
   fetchMessagesLsatDateTime,
 } from "../../thunks/MessagesThunk.ts";
-import { Box, Container, Typography } from '@mui/material';
-
-
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
+import { animateScroll } from "react-scroll";
 
 const Chat = () => {
   const messages = useAppSelector(selectMessages);
   const dispatch = useAppDispatch();
+  const isAllFetchLoading = useAppSelector(selectFetchLoading);
 
   const fetchMessages = useCallback(async () => {
     await dispatch(fetchAllMessages());
+    const options = {
+      duration: 500,
+      smooth: true,
+    };
+    animateScroll.scrollToBottom(options);
   }, [dispatch]);
 
   useEffect(() => {
@@ -28,11 +37,13 @@ const Chat = () => {
   if (messages.length > 0) {
     date = messages[messages.length - 1].datetime;
   }
-
   const getNewMessages = useCallback(async () => {
     await dispatch(fetchMessagesLsatDateTime(date));
-    // window.document.body.scrollHeight;
-
+    const options = {
+      duration: 500,
+      smooth: true,
+    };
+    animateScroll.scrollToBottom(options);
   }, [date, dispatch]);
 
   useEffect(() => {
@@ -44,24 +55,46 @@ const Chat = () => {
   }, [getNewMessages]);
 
   return (
-    <Container maxWidth={'md'}>
-      <Typography variant={'h3'} marginTop={3} marginBottom={3} align={'center'} >Chat
+    <Container maxWidth={"md"}>
+      <Typography
+        variant={"h3"}
+        marginTop={3}
+        marginBottom={3}
+        align={"center"}
+      >
+        Chat
       </Typography>
-      <Box style={{ position: "relative" }}>
-        <Box>
-          {messages.map((message) => (
-            <MessageItem
-              key={message._id}
-              message={message.message}
-              _id={message._id}
-              datetime={dayjs(message.datetime).format('YYYY-MM-DD hh:mm:ss') }
-              author={message.author}
-            />
-          ))}
+
+      {isAllFetchLoading ? (
+        <Box textAlign={"center"}>
+          <CircularProgress />
         </Box>
-        <Box marginBottom={2} padding={3}>
-          <FormAddNewMessage />
-        </Box>
+      ) : (
+        <>
+          {" "}
+          {messages.length === 0 && !isAllFetchLoading ? (
+            <Typography align={"center"} variant="h6">
+              No messages
+            </Typography>
+          ) : (
+            <Box style={{ position: "relative" }}>
+              {" "}
+              {messages.map((message) => (
+                <MessageItem
+                  key={message.datetime + message.id}
+                  message={message.message}
+                  datetime={dayjs(message.datetime).format(
+                    "YYYY-MM-DD hh:mm:ss",
+                  )}
+                  author={message.author}
+                />
+              ))}
+            </Box>
+          )}
+        </>
+      )}
+      <Box marginBottom={2} padding={3}>
+        <FormAddNewMessage />
       </Box>
     </Container>
   );

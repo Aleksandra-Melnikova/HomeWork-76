@@ -4,7 +4,7 @@ export interface IInputMessage {
 }
 
 export interface IMessage {
-  _id: string;
+  id: string;
   author: string;
   datetime: string;
   message: string;

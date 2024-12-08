@@ -1,28 +1,25 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { IInputMessage } from "../../types";
 import { createMessage } from "../../thunks/MessagesThunk.ts";
-import { useAppDispatch } from "../../app/hooks.ts";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
 import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid2";
-import { Box, Button, TextField } from '@mui/material';
+import { Box, TextField } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { selectAddLoading } from "../../slices/MessagesSlice.ts";
 
 const FormAddNewMessage = () => {
   const [inputMessage, setInputMessage] = useState<IInputMessage>({
     author: "",
     message: "",
   });
+  const isAddLoading = useAppSelector(selectAddLoading);
   const dispatch = useAppDispatch();
-  // const isAddLoading = useAppSelector(selectAddLoading);
-  const [buttonClicked, setButtonClicked] = useState(false);
-
-  const changeInputMessage = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    const value = e.target.value;
     setInputMessage((prevState) => {
-      return {
-        ...prevState,
-        [e.target.name]: e.target.value,
-      };
+      return { ...prevState, [name]: value };
     });
   };
 
@@ -38,7 +35,7 @@ const FormAddNewMessage = () => {
         author: inputMessage.author,
         message: inputMessage.message,
       });
-      setButtonClicked((prevState) => !prevState);
+      postNewMessage().catch((e) => console.error(e));
     } else {
       alert("Fill all fields.");
     }
@@ -58,12 +55,8 @@ const FormAddNewMessage = () => {
     }
   }, [dispatch, inputMessage]);
 
-  useEffect(() => {
-    postNewMessage().catch((e) => console.error(e));
-  }, [buttonClicked, postNewMessage]);
-
   return (
-    <Box marginBottom={2} >
+    <Box marginBottom={2}>
       <form onSubmit={submitForm}>
         <Grid size={12} marginTop={3} marginBottom={1}>
           <TextField
@@ -72,7 +65,7 @@ const FormAddNewMessage = () => {
             id="decoded"
             label="Your name"
             value={inputMessage.author}
-            onChange={changeInputMessage}
+            onChange={inputChangeHandler}
             name="author"
           />
         </Grid>
@@ -84,11 +77,20 @@ const FormAddNewMessage = () => {
             id="message"
             label="Your message:"
             value={inputMessage.message}
-            onChange={changeInputMessage}
+            onChange={inputChangeHandler}
             name="message"
           />
         </Grid>
-        <Box marginTop={1} marginBottom={4}><Button variant={'contained'} type={"submit"} >Send</Button></Box>
+        <Box marginTop={1} marginBottom={4}>
+          <LoadingButton
+            disabled={isAddLoading}
+            loading={isAddLoading}
+            variant={"contained"}
+            type={"submit"}
+          >
+            Send
+          </LoadingButton>
+        </Box>
       </form>
     </Box>
   );

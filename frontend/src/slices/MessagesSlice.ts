@@ -26,8 +26,6 @@ export const selectFetchLoading = (state: RootState) =>
 export const selectAddLoading = (state: RootState) =>
   state.messages.isAddLoading;
 export const selectMessages = (state: RootState) => state.messages.messages;
-export const selectFetchLastMessagesLoading = (state: RootState) =>
-  state.messages.isFetchMessagesLastDatetime;
 
 export const messagesSlice = createSlice({
   name: "messages",

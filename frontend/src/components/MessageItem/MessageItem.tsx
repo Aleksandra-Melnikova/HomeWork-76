@@ -1,25 +1,73 @@
 import React from "react";
-import { IMessage } from "../../types";
-import { Container, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Box, Container, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+export interface IMessageItemProps {
+  author: string;
+  datetime: string;
+  message: string;
+}
 
-const MessageItem: React.FC<IMessage> = ({
-  _id,
+const MessageItem: React.FC<IMessageItemProps> = ({
   author,
   datetime,
   message,
 }) => {
   return (
     <Container maxWidth="md">
-    <Grid   container itemID={_id} spacing={2} marginBottom={3} padding={3} border={1} borderColor={'slategray'} borderRadius={1}>
-      <Grid size={12} >
-        <Typography fontSize={24}>
-          <Typography display={'inline-block'} fontWeight={'bold'} fontSize={24} color={'textSecondary'} >From: </Typography> {author}
-        </Typography>
-          <Typography fontSize={24}>  <Typography display={'inline-block'} color={'textSecondary'} fontWeight={'bold'} fontSize={24} >Date: </Typography> {datetime} </Typography>
-        <Typography fontSize={24} > <Typography display={'inline-block'}  color={'textSecondary'} fontWeight={'bold'} fontSize={24} >Text of message: </Typography> {message} </Typography>
+      <Grid
+        container
+        spacing={2}
+        marginBottom={3}
+        padding={3}
+        border={1}
+        borderColor={"slategray"}
+        borderRadius={1}
+      >
+        <Grid size={12}>
+          <Box>
+            {" "}
+            <Typography
+              display={"inline-block"}
+              fontWeight={"bold"}
+              fontSize={24}
+              color={"textSecondary"}
+            >
+              From:{" "}
+            </Typography>{" "}
+            <Typography display={"inline-block"} fontSize={24}>
+              {author}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography
+              display={"inline-block"}
+              color={"textSecondary"}
+              fontWeight={"bold"}
+              fontSize={24}
+            >
+              Date:{" "}
+            </Typography>{" "}
+            <Typography display={"inline-block"} fontSize={24}>
+              {" "}
+              {datetime}{" "}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography
+              display={"inline-block"}
+              color={"textSecondary"}
+              fontWeight={"bold"}
+              fontSize={24}
+            >
+              Text of message:{" "}
+            </Typography>{" "}
+            <Typography display={"inline-block"} fontSize={24}>
+              {" "}
+              {message}{" "}
+            </Typography>
+          </Box>
+        </Grid>
       </Grid>
-    </Grid>
     </Container>
   );
 };
